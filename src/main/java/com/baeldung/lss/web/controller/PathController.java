@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class PathController {
 
-    @GetMapping("/login")
-    public String login() {
-        return "loginPage";
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/user";
     }
 }

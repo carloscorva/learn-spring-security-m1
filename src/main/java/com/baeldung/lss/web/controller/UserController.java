@@ -16,12 +16,10 @@ import com.baeldung.lss.persistence.UserRepository;
 import com.baeldung.lss.web.model.User;
 
 @Controller
-@RequestMapping("/")
+@RequestMapping("/user")
 public class UserController {
 
     private final UserRepository userRepository;
-
-    //
 
     @Autowired
     public UserController(UserRepository userRepository) {
@@ -30,44 +28,39 @@ public class UserController {
 
     @RequestMapping
     public ModelAndView list() {
-        Iterable<User> users = this.userRepository.findAll();
-        return new ModelAndView("users/list", "users", users);
+        Iterable<User> users = userRepository.findAll();
+        return new ModelAndView("tl/list", "users", users);
     }
 
     @RequestMapping("{id}")
     public ModelAndView view(@PathVariable("id") User user) {
-        return new ModelAndView("users/view", "user", user);
-    }
-
-    @RequestMapping(params = "form", method = RequestMethod.GET)
-    public String createForm(@ModelAttribute User user) {
-        return "users/form";
+        return new ModelAndView("tl/view", "user", user);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public ModelAndView create(@Valid User user, BindingResult result, RedirectAttributes redirect) {
         if (result.hasErrors()) {
-            return new ModelAndView("users/form", "formErrors", result.getAllErrors());
+            return new ModelAndView("tl/form", "formErrors", result.getAllErrors());
         }
         user = this.userRepository.save(user);
         redirect.addFlashAttribute("globalMessage", "Successfully created a new user");
-        return new ModelAndView("redirect:/{user.id}", "user.id", user.getId());
-    }
-
-    @RequestMapping("foo")
-    public String foo() {
-        throw new RuntimeException("Expected exception in controller");
+        return new ModelAndView("redirect:/user/{user.id}", "user.id", user.getId());
     }
 
     @RequestMapping(value = "delete/{id}")
     public ModelAndView delete(@PathVariable("id") Long id) {
         this.userRepository.deleteUser(id);
-        return new ModelAndView("redirect:/");
+        return new ModelAndView("redirect:/user/");
     }
 
     @RequestMapping(value = "modify/{id}", method = RequestMethod.GET)
     public ModelAndView modifyForm(@PathVariable("id") User user) {
-        return new ModelAndView("users/form", "user", user);
+        return new ModelAndView("tl/form", "user", user);
+    }
+
+    @RequestMapping(params = "form", method = RequestMethod.GET)
+    public String createForm(@ModelAttribute User user) {
+        return "tl/form";
     }
 
 }
